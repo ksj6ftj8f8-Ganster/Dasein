@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REMForge Ultra - Sistema de Conversión Multimodal</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2C5530;
+            --secondary-color: #D4C5A9;
+            --accent-color: #8B7355;
+            --background-color: #F8F6F0;
+            --card-background: #FFFFFF;
+            --text-primary: #2C5530;
+            --text-secondary: #8B7355;
+            --border-color: #E8E5E0;
+            --success-color: #7ED321;
+            --warning-color: #F5A623;
+            --error-color: #D0021B;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+            margin-bottom: 40px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 2.8em;
+            font-weight: 300;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .control-panel {
+            background: var(--card-background);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: 1px solid var(--border-color);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .visualization-area {
+            background: var(--card-background);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: 1px solid var(--border-color);
+            min-height: 600px;
+        }
+
+        .section-title {
+            font-size: 1.5em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 10px;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--accent-color);
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(44, 85, 48, 0.02);
+        }
+
+        .upload-area.dragover {
+            border-color: var(--success-color);
+            background-color: rgba(126, 211, 33, 0.05);
+        }
+
+        .upload-icon {
+            font-size: 3em;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            font-size: 1.1em;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .upload-hint {
+            font-size: 0.9em;
+            color: var(--text-secondary);
+            opacity: 0.8;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+            background-color: white;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary-color);
+        }
+
+        .process-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .process-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(44, 85, 48, 0.3);
+        }
+
+        .process-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading-indicator {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid var(--border-color);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .results-section {
+            display: none;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--secondary-color), #E8E5E0);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .chart-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--text-primary);
+        }
+
+        .file-list {
+            margin-bottom: 20px;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: between;
+            padding: 10px;
+            background: rgba(44, 85, 48, 0.05);
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .file-name {
+            flex: 1;
+            font-weight: 500;
+        }
+
+        .file-size {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+
+        .remove-file {
+            background: var(--error-color);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert-success {
+            background: rgba(126, 211, 33, 0.1);
+            border: 1px solid var(--success-color);
+            color: var(--success-color);
+        }
+
+        .alert-error {
+            background: rgba(208, 2, 27, 0.1);
+            border: 1px solid var(--error-color);
+            color: var(--error-color);
+        }
+
+        .alert-info {
+            background: rgba(139, 115, 85, 0.1);
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+        }
+
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2.2em;
+            }
+            
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-brain"></i> REMForge Ultra</h1>
+            <p>Sistema de Conversión Universal de Datos a Registros Experienciales Multimodales</p>
+            <p style="font-size: 0.9em; margin-top: 10px; opacity: 0.8;">
+                <strong>Formato Óptimo para Tokenización Fenomenológica v4.0.0</strong>
+            </p>
+        </div>
+
+        <div class="main-grid">
+            <div class="control-panel">
+                <h2 class="section-title">
+                    <i class="fas fa-cogs"></i> Panel de Control
+                </h2>
+
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <div class="upload-text">Arrastra archivos aquí o haz clic para seleccionar</div>
+                    <div class="upload-hint">Soporta: texto, imágenes, audio, video</div>
+                    <input type="file" id="fileInput" class="file-input" multiple accept=".txt,.md,.png,.jpg,.jpeg,.bmp,.wav,.mp3,.mp4,.avi,.mov">
+                </div>
+
+                <div class="file-list" id="fileList"></div>
+
+                <div class="form-group">
+                    <label class="form-label">Tipo de Análisis</label>
+                    <select class="form-select" id="analysisType">
+                        <option value="standard">Estándar</option>
+                        <option value="deep">Profundo (requiere más recursos)</option>
+                        <option value="phenomenological">Fenomenológico</option>
+                    </select>
+                </div>
+
+                <div class="options-grid">
+                    <div class="form-group">
+                        <label class="form-label">Idioma</label>
+                        <select class="form-select" id="language">
+                            <option value="es">Español</option>
+                            <option value="en">English</option>
+                            <option value="auto">Auto-detectar</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Contexto</label>
+                        <input type="text" class="form-input" id="context" placeholder="Contexto opcional">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Opciones de Análisis</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="extractQualia" checked>
+                            <label for="extractQualia">Extraer Qualia</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="analyzeEmotion" checked>
+                            <label for="analyzeEmotion">Analizar Emociones</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="temporalAnalysis" checked>
+                            <label for="temporalAnalysis">Análisis Temporal</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="spatialAnalysis">
+                            <label for="spatialAnalysis">Análisis Espacial</label>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="process-btn" id="processBtn" onclick="processFiles()">
+                    <i class="fas fa-play"></i> Procesar Archivos
+                </button>
+
+                <div class="loading-indicator" id="loadingIndicator">
+                    <div class="spinner"></div>
+                    <div>Procesando archivos... Esto puede tomar unos momentos.</div>
+                </div>
+            </div>
+
+            <div class="visualization-area">
+                <h2 class="section-title">
+                    <i class="fas fa-chart-line"></i> Visualización de Resultados
+                </h2>
+
+                <div class="alert" id="alertBox"></div>
+
+                <div class="results-section" id="resultsSection">
+                    <div class="stats-grid" id="statsGrid"></div>
+                    <div id="chartsContainer"></div>
+                </div>
+
+                <div id="placeholderContent">
+                    <div style="text-align: center; padding: 60px 20px; color: var(--text-secondary);">
+                        <i class="fas fa-upload" style="font-size: 4em; margin-bottom: 20px; opacity: 0.5;"></i>
+                        <h3>Comienza subiendo archivos</h3>
+                        <p>Selecciona archivos de texto, imágenes, audio o video para comenzar el análisis fenomenológico.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let selectedFiles = [];
+        let remData = null;
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            loadDemoData();
+        });
+
+        function setupEventListeners() {
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('fileInput');
+
+            // Click en área de upload
+            uploadArea.addEventListener('click', () => fileInput.click());
+
+            // Drag and drop
+            uploadArea.addEventListener('dragover', handleDragOver);
+            uploadArea.addEventListener('dragleave', handleDragLeave);
+            uploadArea.addEventListener('drop', handleDrop);
+
+            // Cambio en input de archivos
+            fileInput.addEventListener('change', handleFileSelect);
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('dragover');
+        }
+
+        function handleDragLeave(e) {
+            e.currentTarget.classList.remove('dragover');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('dragover');
+            const files = Array.from(e.dataTransfer.files);
+            addFiles(files);
+        }
+
+        function handleFileSelect(e) {
+            const files = Array.from(e.target.files);
+            addFiles(files);
+        }
+
+        function addFiles(files) {
+            files.forEach(file => {
+                if (!selectedFiles.find(f => f.name === file.name)) {
+                    selectedFiles.push(file);
+                }
+            });
+            updateFileList();
+        }
+
+        function updateFileList() {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '';
+
+            selectedFiles.forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <div class="file-name">${file.name}</div>
+                    <div class="file-size">${formatFileSize(file.size)}</div>
+                    <button class="remove-file" onclick="removeFile(${index})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                fileList.appendChild(fileItem);
+            });
+        }
+
+        function removeFile(index) {
+            selectedFiles.splice(index, 1);
+            updateFileList();
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        async function processFiles() {
+            if (selectedFiles.length === 0) {
+                showAlert('Por favor selecciona al menos un archivo.', 'error');
+                return;
+            }
+
+            const processBtn = document.getElementById('processBtn');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+
+            processBtn.disabled = true;
+            loadingIndicator.style.display = 'block';
+
+            try {
+                // Simular procesamiento
+                await simulateProcessing();
+                
+                // Mostrar resultados
+                displayResults();
+                showAlert('Archivos procesados exitosamente!', 'success');
+                
+            } catch (error) {
+                showAlert('Error al procesar archivos: ' + error.message, 'error');
+            } finally {
+                processBtn.disabled = false;
+                loadingIndicator.style.display = 'none';
+            }
+        }
+
+        async function simulateProcessing() {
+            // Simular tiempo de procesamiento
+            await new Promise(resolve => setTimeout(resolve, 3000));
+            
+            // Generar datos de demo
+            remData = generateDemoREMData();
+        }
+
+        function generateDemoREMData() {
+            const modalities = ['visual', 'auditory', 'haptic', 'affective'];
+            const intentional_modes = ['perception', 'memory', 'reflection', 'contemplation'];
+            const spatial_horizons = ['peripersonal_space', 'extrapersonal_space', 'ambiental_space'];
+            
+            return Array.from({length: 8}, (_, i) => ({
+                rem_id: `rem_${String(i + 1).padStart(3, '0')}`,
+                timestamp: new Date(Date.now() - i * 30000).toISOString(),
+                narrative_stream: `Experiencia sensorial ${i + 1}: ${getRandomNarrative()}`,
+                intentional_act: {
+                    mode: intentional_modes[Math.floor(Math.random() * intentional_modes.length)],
+                    directedness: `qualia_${modalities[Math.floor(Math.random() * modalities.length)]}`
+                },
+                sensorium: {
+                    modality_confidence: {
+                        visual: Math.random() * 0.8 + 0.1,
+                        auditory: Math.random() * 0.8 + 0.1,
+                        haptic: Math.random() * 0.5,
+                        affective: Math.random() * 0.6 + 0.2,
+                        proprioceptive: Math.random() * 0.4
+                    },
+                    affective_valence: (Math.random() - 0.5) * 2,
+                    spatial_horizon: spatial_horizons[Math.floor(Math.random() * spatial_horizons.length)]
+                },
+                semantic_contamination: {
+                    lexical_anchors: generateRandomAnchors(),
+                    contamination_strength: Math.random() * 0.5 + 0.3,
+                    qualia_tokens: generateRandomQualia()
+                }
+            }));
+        }
+
+        function getRandomNarrative() {
+            const narratives = [
+                "Veo colores vibrantes que me llenan de energía",
+                "Oigo el sonido suave de la naturaleza",
+                "Siento la textura suave bajo mis dedos",
+                "Percibo la luz tenue del atardecer",
+                "Escucho el murmullo distante de la lluvia",
+                "Siento la brisa fresca en mi piel",
+                "Observo las formas orgánicas en mi entorno",
+                "Noto el aroma familiar del café recién hecho"
+            ];
+            return narratives[Math.floor(Math.random() * narratives.length)];
+        }
+
+        function generateRandomAnchors() {
+            const anchors = ['color', 'sonido', 'textura', 'luz', 'ambiente', 'sensación', 'percepción', 'experiencia'];
+            return anchors.sort(() => 0.5 - Math.random()).slice(0, Math.floor(Math.random() * 4) + 2);
+        }
+
+        function generateRandomQualia() {
+            const qualia = ['rojo', 'suave', 'brillante', 'cálido', 'claro', 'armonioso'];
+            return qualia.slice(0, Math.floor(Math.random() * 3) + 1).map(q => ({
+                token: q,
+                is_sensorial: Math.random() > 0.5,
+                is_affective: Math.random() > 0.7
+            }));
+        }
+
+        function displayResults() {
+            if (!remData) return;
+
+            // Ocultar placeholder y mostrar resultados
+            document.getElementById('placeholderContent').style.display = 'none';
+            document.getElementById('resultsSection').style.display = 'block';
+
+            // Mostrar estadísticas
+            displayStatistics(remData);
+
+            // Mostrar gráficos
+            displayCharts(remData);
+        }
+
+        function displayStatistics(data) {
+            const statsGrid = document.getElementById('statsGrid');
+            
+            const stats = {
+                'Total Experiencias': data.length,
+                'Qualia Detectados': data.reduce((sum, rem) => sum + (rem.semantic_contamination.qualia_tokens?.length || 0), 0),
+                'Anclajes Totales': data.reduce((sum, rem) => sum + (rem.semantic_contamination.lexical_anchors?.length || 0), 0),
+                'Valencia Media': (data.reduce((sum, rem) => sum + rem.sensorium.affective_valence, 0) / data.length).toFixed(3)
+            };
+
+            statsGrid.innerHTML = Object.entries(stats).map(([label, value]) => `
+                <div class="stat-card">
+                    <div class="stat-value">${value}</div>
+                    <div class="stat-label">${label}</div>
+                </div>
+            `).join('');
+        }
+
+        function displayCharts(data) {
+            const container = document.getElementById('chartsContainer');
+            
+            // Gráfico 1: Distribución de Modalidades
+            const modalityChart = createModalityChart(data);
+            
+            // Gráfico 2: Análisis Temporal
+            const temporalChart = createTemporalChart(data);
+            
+            // Gráfico 3: Análisis Afectivo
+            const affectiveChart = createAffectiveChart(data);
+
+            container.innerHTML = `
+                <div class="chart-container">
+                    <div class="chart-title">Distribución de Modalidades Sensoriales</div>
+                    <div id="modalityChart"></div>
+                </div>
+                
+                <div class="chart-container">
+                    <div class="chart-title">Evolución Temporal de Valencia Afectiva</div>
+                    <div id="temporalChart"></div>
+                </div>
+                
+                <div class="chart-container">
+                    <div class="chart-title">Distribución de Valencia Afectiva</div>
+                    <div id="affectiveChart"></div>
+                </div>
+            `;
+
+            // Renderizar gráficos
+            Plotly.newPlot('modalityChart', modalityChart.data, modalityChart.layout, {responsive: true});
+            Plotly.newPlot('temporalChart', temporalChart.data, temporalChart.layout, {responsive: true});
+            Plotly.newPlot('affectiveChart', affectiveChart.data, affectiveChart.layout, {responsive: true});
+        }
+
+        function createModalityChart(data) {
+            const modalities = ['visual', 'auditory', 'haptic', 'affective', 'proprioceptive'];
+            const colors = ['#4A90E2', '#F5A623', '#BD10E0', '#E24A8B', '#9013FE'];
+            
+            const avgConfidences = modalities.map(mod => {
+                const confidences = data.map(rem => rem.sensorium.modality_confidence[mod] || 0);
+                return confidences.reduce((sum, val) => sum + val, 0) / confidences.length;
+            });
+
+            return {
+                data: [{
+                    x: modalities,
+                    y: avgConfidences,
+                    type: 'bar',
+                    marker: {color: colors},
+                    text: avgConfidences.map(val => val.toFixed(3)),
+                    textposition: 'auto'
+                }],
+                layout: {
+                    xaxis: {title: 'Modalidad'},
+                    yaxis: {title: 'Confianza Promedio', range: [0, 1]},
+                    margin: {t: 20, b: 60, l: 60, r: 30}
+                }
+            };
+        }
+
+        function createTemporalChart(data) {
+            const timestamps = data.map((_, i) => i);
+            const valences = data.map(rem => rem.sensorium.affective_valence);
+
+            return {
+                data: [{
+                    x: timestamps,
+                    y: valences,
+                    type: 'scatter',
+                    mode: 'lines+markers',
+                    line: {color: '#E24A8B', width: 3},
+                    marker: {size: 8, color: '#E24A8B'}
+                }],
+                layout: {
+                    xaxis: {title: 'Secuencia Temporal'},
+                    yaxis: {title: 'Valencia Afectiva', range: [-1, 1]},
+                    margin: {t: 20, b: 60, l: 60, r: 30}
+                }
+            };
+        }
+
+        function createAffectiveChart(data) {
+            const valences = data.map(rem => rem.sensorium.affective_valence);
+
+            return {
+                data: [{
+                    x: valences,
+                    type: 'histogram',
+                    nbinsx: 15,
+                    marker: {color: '#4A90E2', opacity: 0.7}
+                }],
+                layout: {
+                    xaxis: {title: 'Valencia Afectiva'},
+                    yaxis: {title: 'Frecuencia'},
+                    margin: {t: 20, b: 60, l: 60, r: 30}
+                }
+            };
+        }
+
+        function showAlert(message, type) {
+            const alertBox = document.getElementById('alertBox');
+            alertBox.className = `alert alert-${type}`;
+            alertBox.textContent = message;
+            alertBox.style.display = 'block';
+            
+            setTimeout(() => {
+                alertBox.style.display = 'none';
+            }, 5000);
+        }
+
+        function loadDemoData() {
+            // Cargar datos de demo para mostrar inmediatamente
+            remData = generateDemoREMData();
+            displayResults();
+        }
+    </script>
+</body>
+</html>

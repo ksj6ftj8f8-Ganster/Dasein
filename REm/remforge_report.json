@@ -1,0 +1,51 @@
+{
+  "summary": {
+    "total_experiences": 3,
+    "processed_at": "2025-11-09T12:52:58.935737",
+    "analysis_type": "phenomenological_demo"
+  },
+  "modality_analysis": {
+    "visual": {
+      "mean": 0.73,
+      "std": 0.11,
+      "min": 0.3,
+      "max": 0.9
+    },
+    "auditory": {
+      "mean": 0.52,
+      "std": 0.37,
+      "min": 0.2,
+      "max": 0.95
+    },
+    "haptic": {
+      "mean": 0.3,
+      "std": 0.35,
+      "min": 0.0,
+      "max": 0.9
+    },
+    "affective": {
+      "mean": 0.6,
+      "std": 0.21,
+      "min": 0.3,
+      "max": 0.8
+    }
+  },
+  "affective_analysis": {
+    "mean_valence": 0.57,
+    "valence_std": 0.15,
+    "positive_count": 3,
+    "negative_count": 0,
+    "neutral_count": 0
+  },
+  "qualia_summary": {
+    "total_qualia": 6,
+    "qualia_per_experience": 2.0,
+    "sensorial_qualia": 3,
+    "affective_qualia": 3
+  },
+  "temporal_analysis": {
+    "duration_seconds": 60,
+    "experiences_per_minute": 3,
+    "valence_trend": "positive_stable"
+  }
+}

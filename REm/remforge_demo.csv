@@ -1,0 +1,4 @@
+rem_id,timestamp,narrative,affective_valence,spatial_horizon,intentional_mode,dominant_modality
+rem_001,2024-01-15T10:30:00,Veo un color rojo intenso en la superficie mientra...,0.7,peripersonal_space,perception,visual
+rem_002,2024-01-15T10:30:30,"Oigo un sonido suave y constante, como un zumbido ...",0.4,ambiental_space,contemplation,auditory
+rem_003,2024-01-15T10:31:00,"Siento la textura áspera del papel bajo mis dedos,...",0.6,bodily_space,memory,haptic
