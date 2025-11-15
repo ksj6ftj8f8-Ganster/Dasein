@@ -1,0 +1,59 @@
+# Requirements para Renode Entity - Monje Virtual v∞-HR
+# Sistema Blockchain de Máxima Resolución
+
+# Análisis y procesamiento de datos
+numpy>=1.19.0
+scipy>=1.5.0
+pandas>=1.1.0
+
+# Visualización de datos
+matplotlib>=3.3.0
+seaborn>=0.11.0
+
+# Procesamiento de señales
+scikit-learn>=0.23.0
+
+# Análisis estadístico
+statsmodels>=0.12.0
+
+# Manejo de archivos y datos
+h5py>=2.10.0
+openpyxl>=3.0.0
+
+# Criptografía y hash
+pycryptodome>=3.9.0
+hashlib-compat>=1.0.0
+
+# Utilidades del sistema
+psutil>=5.7.0
+click>=7.0.0
+tqdm>=4.50.0
+
+# Logging y monitoreo
+loguru>=0.5.0
+coloredlogs>=14.0
+
+# Testing
+pytest>=6.0.0
+pytest-cov>=2.10.0
+
+# Documentación
+sphinx>=3.0.0
+sphinx-rtd-theme>=0.5.0
+
+# Desarrollo
+black>=20.8b1
+flake8>=3.8.0
+mypy>=0.800
+
+# Jupyter (opcional)
+jupyter>=1.0.0
+ipywidgets>=7.5.0
+
+# Notas:
+# - numpy y scipy son fundamentales para el análisis numérico
+# - scikit-learn para algoritmos de machine learning en análisis de side-channel
+# - matplotlib y seaborn para visualización de resultados
+# - h5py para almacenamiento eficiente de grandes conjuntos de datos
+# - pycryptodome para implementaciones criptográficas de referencia
+# - psutil para monitoreo del sistema durante las simulaciones
