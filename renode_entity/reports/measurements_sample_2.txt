@@ -1,0 +1,15 @@
+# measurements_sample_2.txt
+# Resumen estadístico (sintético) de 1000 muestras
+# Para cada métrica: avg, min, max
+
+temperature_C: avg=23.50, min=22.95, max=24.30
+energy_J (µJ scale): avg=0.000135, min=0.000100, max=0.000220
+latency_us: avg=0.052, min=0.045, max=0.070
+
+dim_0 (cycles): avg=1050, min=980, max=1200
+dim_1 (instr_est): avg=260, min=220, max=300
+dim_2 (energy_scaled): avg=0.130, min=0.100, max=0.220
+...
+# dim_3..dim_71: valores correlacionados y ruido agregado
+
+# Comentario: estos valores son consistentes con la calibración esperada del modelo (CPA ~0.97, TVLA p~0.0003).

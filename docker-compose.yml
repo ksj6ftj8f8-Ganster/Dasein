@@ -19,3 +19,35 @@ services:
     restart: unless-stopped
     extra_hosts:
       - "host.docker.internal:host-gateway"
+  # Renode Simulator
+  renode-simulator:
+    build:
+      context: .
+      dockerfile: Dockerfile.renode
+    container_name: renode_simulation_container
+    volumes:
+      # Persiste los resultados de la simulación
+      - ./renode_entity/reports:/app/renode_entity/reports
+      # Monta el código fuente de renode_entity para que el contenedor pueda acceder a él
+      - ./renode_entity:/app/renode_entity
+      # Monta el directorio base de Dasein para que /app tenga acceso a todo el proyecto
+      - .:/app 
+    # La simulación de hardware a veces requiere privilegios
+    # Descomenta las siguientes líneas si encuentras problemas con la ejecución del módulo del kernel
+    # o la aceleración KVM dentro de Renode.
+    # privileged: true
+    # devices:
+    #   - /dev/kvm:/dev/kvm
+    environment:
+      # Variables de entorno adicionales para Renode o el script, si fueran necesarias
+      - RENODE_LOG_LEVEL=3
+    # Asegúrate de que este script sea ejecutable dentro del contenedor (se manejará en el Dockerfile)
+    command: ["/app/renode_entity/scripts/run_simulation_in_container.sh"]
+    # No hay `ports` necesarios a menos que la simulación exponga algún servicio.
+    # No depende directamente de LightRAG API para su ejecución, pero podría necesitar la red.
+    networks:
+      - default
+
+networks:
+  default:
+    driver: bridge
