@@ -23,7 +23,7 @@ services:
   renode-simulator:
     build:
       context: .
-      dockerfile: Dockerfile.renode
+      dockerfile: Dockerfile.advanced
     container_name: renode_simulation_container
     volumes:
       # Persiste los resultados de la simulación
