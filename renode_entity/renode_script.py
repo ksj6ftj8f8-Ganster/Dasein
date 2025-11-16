@@ -23,7 +23,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 class RenodeController:
-    def __init__(self, config_file="rpi4.resc", output_dir="reports"):
+    def __init__(self, config_file="vΩ4-digital-twin.repl", output_dir="reports"):
         self.config_file = config_file
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(exist_ok=True)
@@ -194,6 +194,14 @@ class RenodeController:
             "determinism": True
         }
         
+        # --- NUEVA LÓGICA: Clustering Fenomenológico (vΩ.4-DigitalTwin) ---
+        fenomenological_relations = self._perform_fenomenological_clustering(
+            analysis_results["cpa_correlation"],
+            analysis_results["tvla_p_value"]
+        )
+        analysis_results["fenomenological_relations"] = phenomenological_relations
+        # ------------------------------------------------------------------
+        
         # Guardar resultados
         results_file = self.output_dir / f"analysis_results_{int(time.time())}.json"
         
@@ -204,8 +212,60 @@ class RenodeController:
         logger.info(f"Análisis completado. Resultados en: {results_file}")
         logger.info(f"CPA Correlación: {analysis_results['cpa_correlation']}")
         logger.info(f"TVLA p-value: {analysis_results['tvla_p_value']}")
+        logger.info(f"Polaridades Fenomenológicas: {fenomenological_relations}")
         
         return analysis_results
+    
+    def _perform_fenomenological_clustering(self, cpa_correlation, tvla_p_value):
+        """
+        Simula la inferencia de relaciones fenomenológicas (no semánticas)
+        basada en los principios del vΩ.4-DigitalTwin.
+        """
+        logger.info("Realizando clustering fenomenológico...")
+        
+        # Simular la emergencia de polaridades y "campos Q"
+        # basados en umbrales de CPA y TVLA
+        
+        # Campo Q de Seguridad (Side-Channel Leakage)
+        security_field_q = {
+            "is_significant": cpa_correlation > 0.95 and tvla_p_value < 0.001,
+            "description": "Fuga de información de canal lateral"
+        }
+        
+        # Campo Q de Comportamiento (Behavioral Pattern)
+        # Aquí, por ejemplo, una baja correlación pero un p-value significativo
+        # podría indicar un patrón de comportamiento anómalo pero no una fuga directa
+        behavioral_field_q = {
+            "is_significant": cpa_correlation < 0.1 and tvla_p_value < 0.05,
+            "description": "Patrón de comportamiento anómalo"
+        }
+        
+        # Simular dimensiones abstractas ("color", "melancolía")
+        # a partir de las métricas físicas.
+        # Estas son relaciones no semánticas que emergen de la "física"
+        
+        # Dimensión de "Color" (mapeada a la intensidad de la fuga)
+        color_dimension = {
+            "red_intensity": cpa_correlation, # Correlación alta = "rojo" intenso
+            "blue_intensity": 1 - cpa_correlation,
+            "green_intensity": tvla_p_value * 1000
+        }
+        
+        # Dimensión de "Melancolía" (mapeada a la predictibilidad)
+        # Un sistema muy predecible (CPA alto) es menos "melancólico"
+        melancholy_dimension = {
+            "value": 1 - cpa_correlation,
+            "description": "Incertidumbre o impredictibilidad del comportamiento"
+        }
+        
+        return {
+            "security_field_q": security_field_q,
+            "behavioral_field_q": behavioral_field_q,
+            "abstract_dimensions": {
+                "color_dimension": color_dimension,
+                "melancholy_dimension": melancholy_dimension
+            }
+        }
     
     def monitor_simulation(self):
         """Monitorear la salida de la simulación"""
